@@ -274,6 +274,7 @@ services:
       - "traefik.http.routers.onlyoffice-document.entrypoints=websecure"
       - "traefik.http.services.onlyoffice-document.loadbalancer.server.port=80"
       - "traefik.http.routers.onlyoffice-document.tls=true"
+      - "traefik.http.routers.onlyoffice-document.tls.certresolver=letsencrypt"
       - "traefik.http.routers.onlyoffice-document.middlewares=compresstraefik,onlyoffice-document-header"
       - "traefik.http.middlewares.compresstraefik.compress=true"
       - "traefik.http.middlewares.onlyoffice-document-header.headers.referrerPolicy=no-referrer"
