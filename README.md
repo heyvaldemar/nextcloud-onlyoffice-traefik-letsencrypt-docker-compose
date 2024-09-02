@@ -18,6 +18,24 @@ Deploy Nextcloud using Docker Compose:
 
 `docker compose -f nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml -p nextcloud up -d`
 
+# Background Jobs Using Cron
+
+To ensure your Nextcloud instance operates efficiently, it's important to use the "Cron" method to execute background jobs. A dedicated Docker container has already been set up in your environment to handle these tasks.
+
+## Steps to Enable Cron:
+
+1. **Log in to Nextcloud as an Administrator.**
+2. Go to **Settings** (click on your user profile in the top right corner and select "Settings").
+3. In the **Administration** section on the left sidebar, select **Basic settings**.
+4. Scroll down to the **Background jobs** section.
+5. Select the **"Cron (Recommended)"** option.
+
+![nextcloud-cron](https://github.com/user-attachments/assets/bf3399ef-c859-499b-b992-fd5d4eeb5f0b)
+
+## Why Use Cron?
+
+The "Cron" method ensures that background tasks, such as file indexing, notifications, and cleanup operations, run at regular intervals independently of user activity. This method is more reliable and efficient than AJAX or Webcron, particularly for larger or more active instances, as it does not depend on users accessing the site to trigger these tasks. With the dedicated container in your setup, this method keeps your Nextcloud instance responsive and in good health by running these jobs consistently.
+
 # Backups
 
 The `backups` container in the configuration is responsible for the following:
