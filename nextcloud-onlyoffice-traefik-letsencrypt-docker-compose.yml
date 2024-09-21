@@ -191,13 +191,11 @@ services:
       - "traefik.http.services.nextcloud.loadbalancer.passhostheader=true"
       - "traefik.http.routers.nextcloud.middlewares=compresstraefik,nextcloud-header"
       - "traefik.http.middlewares.compresstraefik.compress=true"
-      - "traefik.http.middlewares.nextcloud-header.headers.referrerPolicy=no-referrer"
-      - "traefik.http.middlewares.nextcloud-header.headers.stsSeconds=15552000"
-      - "traefik.http.middlewares.nextcloud-header.headers.forceSTSHeader=true"
-      - "traefik.http.middlewares.nextcloud-header.headers.stsPreload=true"
-      - "traefik.http.middlewares.nextcloud-header.headers.stsIncludeSubdomains=true"
-      - "traefik.http.middlewares.nextcloud-header.headers.browserXssFilter=true"
-      - "traefik.http.middlewares.nextcloud-header.headers.customRequestHeaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.sts-headers.headers.stsSeconds=15552000"
+      - "traefik.http.middlewares.sts-headers.headers.stsIncludeSubdomains=True"
+      - "traefik.http.middlewares.dav-discovery.replacepathregex.regex=^/.well-known/(card|cal)dav"
+      - "traefik.http.middlewares.dav-discovery.replacepathregex.replacement=/remote.php/dav/"
+      - "traefik.http.routers.nextcloud.middlewares=sts-headers,dav-discovery"
       - "traefik.docker.network=traefik-network"
     restart: unless-stopped
     depends_on:
