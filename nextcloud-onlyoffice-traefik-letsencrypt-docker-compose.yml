@@ -188,6 +188,7 @@ services:
       TRUSTED_PROXIES: 172.16.0.0/12 192.168.0.0/16 10.0.0.0/8 fc00::/7 fe80::/10 2001:db8::/32
     networks:
       - nextcloud-network
+      - onlyoffice-network
       - traefik-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80/"]
@@ -266,13 +267,12 @@ services:
     restart: unless-stopped
 
   rabbitmq-onlyoffice-document:
-    image: ${ONLYOFFICE_DOCUMENT_RABBITMQ_IMAGE_TAG}
+    image: ${RABBITMQ_IMAGE_TAG}
     volumes:
-      - rabbitmq-onlyoffice-document-data:/bitnami/rabbitmq/mnesia
+      - rabbitmq-onlyoffice-document-data:/var/lib/rabbitmq
     environment:
-      RABBITMQ_USERNAME: ${ONLYOFFICE_DOCUMENT_RABBITMQ_USER}
-      RABBITMQ_PASSWORD: ${ONLYOFFICE_DOCUMENT_RABBITMQ_PASSWORD}
-      POSTGRES_PASSWORD: ${ONLYOFFICE_DOCUMENT_DB_PASSWORD}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     networks:
       - onlyoffice-network
     healthcheck:
@@ -298,7 +298,8 @@ services:
       DB_NAME: ${ONLYOFFICE_DOCUMENT_DB_NAME}
       DB_USER: ${ONLYOFFICE_DOCUMENT_DB_USER}
       DB_PWD: ${ONLYOFFICE_DOCUMENT_DB_PASSWORD}
-      AMQP_URI: amqp://${ONLYOFFICE_DOCUMENT_RABBITMQ_USER}:${ONLYOFFICE_DOCUMENT_RABBITMQ_PASSWORD}@rabbitmq-onlyoffice-document
+      AMQP_TYPE: rabbitmq
+      AMQP_URI: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq-onlyoffice-document
       REDIS_SERVER_HOST: redis-onlyoffice-document
       REDIS_SERVER_PORT: 6379
       JWT_ENABLED: true
