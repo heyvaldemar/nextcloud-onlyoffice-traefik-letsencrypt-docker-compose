@@ -52,10 +52,10 @@ jobs:
             sleep 10; \
           done'
 
-      - name: Wait for the application to be ready via Traefik
+      - name: Wait for the Traefik dashboard to be ready
         run: |
-          echo "Checking the routing and availability of the application via Traefik..."
-          timeout 5m bash -c 'while ! curl -fsSLk "https://$APP_2_HOSTNAME"; do \
+          echo "Checking the routing and availability of the Traefik dashboard..."
+          timeout 5m bash -c 'while ! curl -fsSLk --write-out "%{http_code}" --output /dev/null "https://$APP_TRAEFIK_HOSTNAME" | grep -E "200|401"; do \
             echo "Waiting for the application to be ready..."; \
             sleep 10; \
           done'
