@@ -1,3 +1,20 @@
+# Image pins live HERE, as interpolation defaults, so `git pull` (or
+# re-downloading this file) delivers the exact version combination this
+# repository has tested — no .env editing required. Setting the matching
+# variable in .env overrides the default for anyone who wants to pin
+# differently; .env itself carries only secrets and deliberate overrides.
+# CI (Trivy scans, check-pin-freshness, the ephemeral test .env) reads
+# the pins from these lines — this block is the single source of truth.
+x-images:
+  traefik: &traefik-image ${TRAEFIK_IMAGE_TAG:-traefik:3.7@sha256:9c2a54d87f76f5c2f5f2682c68394af92fb12c0a2686798d6462a3f84bd78eaf}
+  nextcloud-postgres: &nextcloud-postgres-image ${NEXTCLOUD_POSTGRES_IMAGE_TAG:-postgres:16@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94}
+  nextcloud-redis: &nextcloud-redis-image ${NEXTCLOUD_REDIS_IMAGE_TAG:-redis:7.4@sha256:71da9275c5f3fcb97d0fa0c8c5b36cc995327265420f17a04bfd544f458059f7}
+  nextcloud: &nextcloud-image ${NEXTCLOUD_IMAGE_TAG:-nextcloud:34.0.3@sha256:da8a54816fca90e2de7cba27e5d476ed00db55ab9aade462f926db8c1463245b}
+  onlyoffice-postgres: &onlyoffice-postgres-image ${ONLYOFFICE_DOCUMENT_POSTGRES_IMAGE_TAG:-postgres:16@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94}
+  onlyoffice-redis: &onlyoffice-redis-image ${ONLYOFFICE_DOCUMENT_REDIS_IMAGE_TAG:-redis:7.4@sha256:71da9275c5f3fcb97d0fa0c8c5b36cc995327265420f17a04bfd544f458059f7}
+  onlyoffice-document: &onlyoffice-document-image ${ONLYOFFICE_DOCUMENT_IMAGE_TAG:-onlyoffice/documentserver:9.4.0@sha256:e3da62a847b9a5d51a11f73cfea1d9c13c3be3809614490d4edddcf01dcf919b}
+  rabbitmq: &rabbitmq-image ${RABBITMQ_IMAGE_TAG:-rabbitmq:4.3-management@sha256:45226f38499559b9f56875c752cc6689ff90e8f20796fe80fd9bc28d64723031}
+
 networks:
   nextcloud-network:
     external: true
@@ -25,17 +42,17 @@ volumes:
 
 services:
   postgres-nextcloud:
-    image: ${NEXTCLOUD_POSTGRES_IMAGE_TAG}
+    image: *nextcloud-postgres-image
     volumes:
       - nextcloud-postgres:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: ${NEXTCLOUD_DB_NAME}
-      POSTGRES_USER: ${NEXTCLOUD_DB_USER}
-      POSTGRES_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
+      POSTGRES_DB: ${NEXTCLOUD_DB_NAME:-nextclouddb}
+      POSTGRES_USER: ${NEXTCLOUD_DB_USER:-nextclouddbuser}
+      POSTGRES_PASSWORD: ${NEXTCLOUD_DB_PASSWORD:?set in .env - see .env.example for generation command}
     networks:
       - nextcloud-network
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "${NEXTCLOUD_DB_NAME}", "-U", "${NEXTCLOUD_DB_USER}" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "${NEXTCLOUD_DB_NAME:-nextclouddb}", "-U", "${NEXTCLOUD_DB_USER:-nextclouddbuser}" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -43,7 +60,7 @@ services:
     restart: unless-stopped
 
   redis-nextcloud:
-    image: ${NEXTCLOUD_REDIS_IMAGE_TAG}
+    image: *nextcloud-redis-image
     command: ["redis-server", "--requirepass", "$NEXTCLOUD_REDIS_PASSWORD"]
     volumes:
       - redis-nextcloud-data:/data
@@ -58,23 +75,23 @@ services:
     restart: unless-stopped
 
   nextcloud:
-    image: ${NEXTCLOUD_IMAGE_TAG}
+    image: *nextcloud-image
     volumes:
-      - nextcloud-data:${DATA_PATH}
+      - nextcloud-data:${DATA_PATH:-/var/www/html}
     environment:
-      TZ: ${NEXTCLOUD_TIMEZONE}
+      TZ: ${NEXTCLOUD_TIMEZONE:-America/New_York}
       POSTGRES_HOST: postgres-nextcloud
       DB_PORT: 5432
-      POSTGRES_DB: ${NEXTCLOUD_DB_NAME}
-      POSTGRES_USER: ${NEXTCLOUD_DB_USER}
+      POSTGRES_DB: ${NEXTCLOUD_DB_NAME:-nextclouddb}
+      POSTGRES_USER: ${NEXTCLOUD_DB_USER:-nextclouddbuser}
       POSTGRES_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
       REDIS_HOST: redis-nextcloud
       REDIS_HOST_PORT: 6379
-      REDIS_HOST_PASSWORD: ${NEXTCLOUD_REDIS_PASSWORD}
-      NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_ADMIN_USERNAME}
-      NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
-      NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_HOSTNAME}
-      OVERWRITECLIURL: ${NEXTCLOUD_URL}
+      REDIS_HOST_PASSWORD: ${NEXTCLOUD_REDIS_PASSWORD:?set in .env - see .env.example for generation command}
+      NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_ADMIN_USERNAME:-nextcloudadmin}
+      NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD:?set in .env - see .env.example for generation command}
+      NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_HOSTNAME:?set in .env - see .env.example}
+      OVERWRITECLIURL: ${NEXTCLOUD_URL:?set in .env - see .env.example}
       OVERWRITEPROTOCOL: https
       OVERWRITEHOST: ${NEXTCLOUD_HOSTNAME}
       TRUSTED_PROXIES: 172.16.0.0/12 192.168.0.0/16 10.0.0.0/8 fc00::/7 fe80::/10 2001:db8::/32
@@ -134,20 +151,20 @@ services:
         condition: service_healthy
 
   nextcloud-cron:
-    image: ${NEXTCLOUD_IMAGE_TAG}
+    image: *nextcloud-image
     entrypoint: /cron.sh
     volumes:
-      - nextcloud-data:${DATA_PATH}
+      - nextcloud-data:${DATA_PATH:-/var/www/html}
     networks:
       - nextcloud-network
 
   postgres-onlyoffice-document:
-    image: ${ONLYOFFICE_DOCUMENT_POSTGRES_IMAGE_TAG}
+    image: *onlyoffice-postgres-image
     volumes:
       - onlyoffice-document-postgres:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: ${ONLYOFFICE_DOCUMENT_DB_NAME}
-      POSTGRES_USER: ${ONLYOFFICE_DOCUMENT_DB_USER}
+      POSTGRES_DB: ${ONLYOFFICE_DOCUMENT_DB_NAME:-onlyofficedb}
+      POSTGRES_USER: ${ONLYOFFICE_DOCUMENT_DB_USER:-onlyofficedbuser}
       POSTGRES_HOST_AUTH_METHOD: trust
     networks:
       - onlyoffice-network
@@ -160,7 +177,7 @@ services:
     restart: unless-stopped
 
   redis-onlyoffice-document:
-    image: ${ONLYOFFICE_DOCUMENT_REDIS_IMAGE_TAG}
+    image: *onlyoffice-redis-image
     volumes:
       - redis-onlyoffice-document-data:/data
     networks:
@@ -174,12 +191,12 @@ services:
     restart: unless-stopped
 
   rabbitmq-onlyoffice-document:
-    image: ${RABBITMQ_IMAGE_TAG}
+    image: *rabbitmq-image
     volumes:
       - rabbitmq-onlyoffice-document-data:/var/lib/rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-rabbitmqdb}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?set in .env - see .env.example for generation command}
     networks:
       - onlyoffice-network
     healthcheck:
@@ -191,7 +208,7 @@ services:
     restart: unless-stopped
 
   onlyoffice-document:
-    image: ${ONLYOFFICE_DOCUMENT_IMAGE_TAG}
+    image: *onlyoffice-document-image
     volumes:
       - onlyoffice-document-data:/var/www/onlyoffice/Data
       - onlyoffice-document-log:/var/log/onlyoffice
@@ -202,15 +219,15 @@ services:
       DB_TYPE: postgres
       DB_HOST: postgres-onlyoffice-document
       DB_PORT: 5432
-      DB_NAME: ${ONLYOFFICE_DOCUMENT_DB_NAME}
-      DB_USER: ${ONLYOFFICE_DOCUMENT_DB_USER}
-      DB_PWD: ${ONLYOFFICE_DOCUMENT_DB_PASSWORD}
+      DB_NAME: ${ONLYOFFICE_DOCUMENT_DB_NAME:-onlyofficedb}
+      DB_USER: ${ONLYOFFICE_DOCUMENT_DB_USER:-onlyofficedbuser}
+      DB_PWD: ${ONLYOFFICE_DOCUMENT_DB_PASSWORD:?set in .env - see .env.example for generation command}
       AMQP_TYPE: rabbitmq
-      AMQP_URI: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq-onlyoffice-document
+      AMQP_URI: amqp://${RABBITMQ_USER:-rabbitmqdb}:${RABBITMQ_PASSWORD}@rabbitmq-onlyoffice-document
       REDIS_SERVER_HOST: redis-onlyoffice-document
       REDIS_SERVER_PORT: 6379
       JWT_ENABLED: true
-      JWT_SECRET: ${ONLYOFFICE_DOCUMENT_JWT_SECRET}
+      JWT_SECRET: ${ONLYOFFICE_DOCUMENT_JWT_SECRET:?set in .env - see .env.example for generation command}
       JWT_HEADER: Authorization
       JWT_IN_BODY: 'true'
     networks:
@@ -221,7 +238,7 @@ services:
       # Enable Traefik for this container
       - "traefik.enable=true"
       # Match incoming requests on the specific hostname for OnlyOffice Document Server
-      - "traefik.http.routers.onlyoffice-document.rule=Host(`${ONLYOFFICE_DOCUMENT_HOSTNAME}`)"
+      - "traefik.http.routers.onlyoffice-document.rule=Host(`${ONLYOFFICE_DOCUMENT_HOSTNAME:?set in .env - see .env.example}`)"
       # Assign the router to a named Traefik service
       - "traefik.http.routers.onlyoffice-document.service=onlyoffice-document"
       # Use the 'websecure' (HTTPS) entry point
@@ -256,10 +273,10 @@ services:
         condition: service_healthy
 
   traefik:
-    image: ${TRAEFIK_IMAGE_TAG}
+    image: *traefik-image
     command:
       # Set the log level (DEBUG, INFO, WARN, ERROR)
-      - "--log.level=${TRAEFIK_LOG_LEVEL}"
+      - "--log.level=${TRAEFIK_LOG_LEVEL:-WARN}"
       # Enable the built-in API and web-based dashboard
       - "--api.dashboard=true"
       # Enable the /ping endpoint so we can health-check Traefik
@@ -284,7 +301,7 @@ services:
       # Use ACME (Let's Encrypt) to generate/renew certificates via TLS challenge
       - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
       # The email address used by Let's Encrypt for renewal notices
-      - "--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL:?set in .env - see .env.example}"
       # The file where ACME certificates are stored inside the container
       - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
       # Enable Prometheus metrics
@@ -313,14 +330,14 @@ services:
       # Enable Traefik for this container
       - "traefik.enable=true"
       # A router to expose the Traefik dashboard
-      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_HOSTNAME}`)"
+      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_HOSTNAME:?set in .env - see .env.example}`)"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.routers.dashboard.tls=true"
       - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
       - "traefik.http.routers.dashboard.service=api@internal"
       # Basic Authentication for the Traefik dashboard
       - "traefik.http.routers.dashboard.middlewares=authtraefik"
-      - "traefik.http.middlewares.authtraefik.basicauth.users=${TRAEFIK_BASIC_AUTH}"
+      - "traefik.http.middlewares.authtraefik.basicauth.users=${TRAEFIK_BASIC_AUTH:?set in .env - see .env.example for htpasswd generation}"
       # Specify the internal server port to the dashboard service
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
       # Pass the original Host header to the backend
@@ -328,33 +345,39 @@ services:
     restart: unless-stopped
 
   backups:
-    image: ${NEXTCLOUD_POSTGRES_IMAGE_TAG}
+    image: *nextcloud-postgres-image
+    # `$$VAR` / `$$(...)` escapes are required so docker compose does NOT
+    # interpolate these at config time — they are resolved by the container
+    # shell at runtime from the `environment:` block below, where the
+    # compose-level defaults live. The dump host is postgres-nextcloud (the
+    # service name in this stack); earlier revisions pointed at a host named
+    # `postgres` that does not exist here, so the loop never produced a backup.
     command: >-
-      sh -c 'sleep $BACKUP_INIT_SLEEP &&
+      sh -c 'sleep "$$BACKUP_INIT_SLEEP" &&
       while true; do
-        pg_dump -h postgres -p 5432 -d $NEXTCLOUD_DB_NAME -U $NEXTCLOUD_DB_USER | gzip > $POSTGRES_BACKUPS_PATH/$POSTGRES_BACKUP_NAME-$(date "+%Y-%m-%d_%H-%M").gz &&
-        tar -zcpf $DATA_BACKUPS_PATH/$DATA_BACKUP_NAME-$(date "+%Y-%m-%d_%H-%M").tar.gz $DATA_PATH &&
-        find $POSTGRES_BACKUPS_PATH -type f -mtime +$POSTGRES_BACKUP_PRUNE_DAYS | xargs rm -f &&
-        find $DATA_BACKUPS_PATH -type f -mtime +$DATA_BACKUP_PRUNE_DAYS | xargs rm -f;
-        sleep $BACKUP_INTERVAL; done'
+        pg_dump -h postgres-nextcloud -p 5432 -d "$$NEXTCLOUD_DB_NAME" -U "$$NEXTCLOUD_DB_USER" | gzip > "$$POSTGRES_BACKUPS_PATH/$$POSTGRES_BACKUP_NAME-$$(date "+%Y-%m-%d_%H-%M").gz" &&
+        tar -zcpf "$$DATA_BACKUPS_PATH/$$DATA_BACKUP_NAME-$$(date "+%Y-%m-%d_%H-%M").tar.gz" "$$DATA_PATH" &&
+        find "$$POSTGRES_BACKUPS_PATH" -type f -mtime "+$$POSTGRES_BACKUP_PRUNE_DAYS" | xargs rm -f &&
+        find "$$DATA_BACKUPS_PATH" -type f -mtime "+$$DATA_BACKUP_PRUNE_DAYS" | xargs rm -f;
+        sleep "$$BACKUP_INTERVAL"; done'
     volumes:
       - nextcloud-postgres-backup:/var/lib/postgresql/data
-      - nextcloud-data:${DATA_PATH}
-      - nextcloud-data-backups:${DATA_BACKUPS_PATH}
-      - nextcloud-database-backups:${POSTGRES_BACKUPS_PATH}
+      - nextcloud-data:${DATA_PATH:-/var/www/html}
+      - nextcloud-data-backups:${DATA_BACKUPS_PATH:-/srv/nextcloud-application-data/backups}
+      - nextcloud-database-backups:${POSTGRES_BACKUPS_PATH:-/srv/nextcloud-postgres/backups}
     environment:
-      NEXTCLOUD_DB_NAME: ${NEXTCLOUD_DB_NAME}
-      NEXTCLOUD_DB_USER: ${NEXTCLOUD_DB_USER}
+      NEXTCLOUD_DB_NAME: ${NEXTCLOUD_DB_NAME:-nextclouddb}
+      NEXTCLOUD_DB_USER: ${NEXTCLOUD_DB_USER:-nextclouddbuser}
       PGPASSWORD: ${NEXTCLOUD_DB_PASSWORD}
-      BACKUP_INIT_SLEEP: ${BACKUP_INIT_SLEEP}
-      BACKUP_INTERVAL: ${BACKUP_INTERVAL}
-      POSTGRES_BACKUP_PRUNE_DAYS: ${POSTGRES_BACKUP_PRUNE_DAYS}
-      DATA_BACKUP_PRUNE_DAYS: ${DATA_BACKUP_PRUNE_DAYS}
-      POSTGRES_BACKUPS_PATH: ${POSTGRES_BACKUPS_PATH}
-      DATA_BACKUPS_PATH: ${DATA_BACKUPS_PATH}
-      DATA_PATH: ${DATA_PATH}
-      POSTGRES_BACKUP_NAME: ${POSTGRES_BACKUP_NAME}
-      DATA_BACKUP_NAME: ${DATA_BACKUP_NAME}
+      BACKUP_INIT_SLEEP: ${BACKUP_INIT_SLEEP:-30m}
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-24h}
+      POSTGRES_BACKUP_PRUNE_DAYS: ${POSTGRES_BACKUP_PRUNE_DAYS:-7}
+      DATA_BACKUP_PRUNE_DAYS: ${DATA_BACKUP_PRUNE_DAYS:-7}
+      POSTGRES_BACKUPS_PATH: ${POSTGRES_BACKUPS_PATH:-/srv/nextcloud-postgres/backups}
+      DATA_BACKUPS_PATH: ${DATA_BACKUPS_PATH:-/srv/nextcloud-application-data/backups}
+      DATA_PATH: ${DATA_PATH:-/var/www/html}
+      POSTGRES_BACKUP_NAME: ${POSTGRES_BACKUP_NAME:-nextcloud-postgres-backup}
+      DATA_BACKUP_NAME: ${DATA_BACKUP_NAME:-nextcloud-application-data-backup}
     networks:
       - nextcloud-network
     restart: unless-stopped

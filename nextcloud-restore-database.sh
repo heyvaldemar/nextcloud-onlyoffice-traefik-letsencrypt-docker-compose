@@ -16,7 +16,6 @@ NEXTCLOUD_CONTAINER=$(docker ps -aqf "name=nextcloud-nextcloud")
 NEXTCLOUD_BACKUPS_CONTAINER=$(docker ps -aqf "name=nextcloud-backups")
 NEXTCLOUD_DB_NAME="nextclouddb"
 NEXTCLOUD_DB_USER="nextclouddbuser"
-POSTGRES_PASSWORD=$(docker exec $NEXTCLOUD_BACKUPS_CONTAINER printenv PGPASSWORD)
 BACKUP_PATH="/srv/nextcloud-postgres/backups/"
 
 echo "--> All available database backups:"
@@ -30,7 +29,7 @@ echo "--> Copy and paste the backup name from the list above to restore database
 --> Example: nextcloud-postgres-backup-YYYY-MM-DD_hh-mm.gz"
 echo -n "--> "
 
-read SELECTED_DATABASE_BACKUP
+read -r SELECTED_DATABASE_BACKUP
 
 echo "--> $SELECTED_DATABASE_BACKUP was selected"
 
@@ -38,9 +37,9 @@ echo "--> Stopping service..."
 docker stop "$NEXTCLOUD_CONTAINER"
 
 echo "--> Restoring database..."
-docker exec "$NEXTCLOUD_BACKUPS_CONTAINER" sh -c "dropdb -h postgres -p 5432 $NEXTCLOUD_DB_NAME -U $NEXTCLOUD_DB_USER \
-&& createdb -h postgres -p 5432 $NEXTCLOUD_DB_NAME -U $NEXTCLOUD_DB_USER \
-&& gunzip -c ${BACKUP_PATH}${SELECTED_DATABASE_BACKUP} | psql -h postgres -p 5432 $NEXTCLOUD_DB_NAME -U $NEXTCLOUD_DB_USER"
+docker exec "$NEXTCLOUD_BACKUPS_CONTAINER" sh -c "dropdb -h postgres-nextcloud -p 5432 $NEXTCLOUD_DB_NAME -U $NEXTCLOUD_DB_USER \
+&& createdb -h postgres-nextcloud -p 5432 $NEXTCLOUD_DB_NAME -U $NEXTCLOUD_DB_USER \
+&& gunzip -c ${BACKUP_PATH}${SELECTED_DATABASE_BACKUP} | psql -h postgres-nextcloud -p 5432 $NEXTCLOUD_DB_NAME -U $NEXTCLOUD_DB_USER"
 echo "--> Database recovery completed..."
 
 echo "--> Starting service..."
