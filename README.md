@@ -68,6 +68,10 @@ The `backups` container runs a `pg_dump | gzip` + `tar.gz`-of-data → prune →
 
 Worth knowing: before v1.0.0 the backup loop pointed at a database host that does not exist in this stack, so it never produced a single backup. If you deployed an earlier revision, check that `/srv/nextcloud-postgres/backups` actually has files dated after your upgrade.
 
+## Resource limits
+
+Every service carries memory and CPU limits plus reservations as compose-level defaults — the same values CI boots the stack under. Override any of them in `.env` (the knobs and their defaults are listed in `.env.example`, e.g. `TRAEFIK_MEMORY_LIMIT=512m`) and the override survives every `git pull`. If a service is OOM-killed under real load, `docker inspect <container> --format '{{.State.OOMKilled}}'` says so; raise its `_MEMORY_LIMIT` and recreate.
+
 ## Testing
 
 The [Deployment Verification](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml?query=branch%3Amain) workflow runs on every push, pull request, and every Monday at 06:00 UTC: shellcheck + actionlint, Trivy scans of the pinned images, the weekly freshness check, and a deploy-and-test job that boots all nine services with ephemeral credentials and requires Nextcloud's `status.php` to report `installed:true` and the ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.

@@ -43,6 +43,16 @@ volumes:
 services:
   postgres-nextcloud:
     image: *nextcloud-postgres-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_POSTGRES_NEXTCLOUD_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_POSTGRES_NEXTCLOUD_MEMORY_LIMIT:-1g}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_POSTGRES_NEXTCLOUD_CPU_LIMIT:-1.0}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_POSTGRES_NEXTCLOUD_MEMORY_RESERVATION:-128m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_POSTGRES_NEXTCLOUD_CPU_RESERVATION:-0.25}"
     volumes:
       - nextcloud-postgres:/var/lib/postgresql/data
     environment:
@@ -61,6 +71,16 @@ services:
 
   redis-nextcloud:
     image: *nextcloud-redis-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_REDIS_NEXTCLOUD_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_REDIS_NEXTCLOUD_MEMORY_LIMIT:-256m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_REDIS_NEXTCLOUD_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_REDIS_NEXTCLOUD_MEMORY_RESERVATION:-32m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_REDIS_NEXTCLOUD_CPU_RESERVATION:-0.1}"
     command: ["redis-server", "--requirepass", "$NEXTCLOUD_REDIS_PASSWORD"]
     volumes:
       - redis-nextcloud-data:/data
@@ -76,6 +96,16 @@ services:
 
   nextcloud:
     image: *nextcloud-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_MEMORY_LIMIT:-1g}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_CPU_LIMIT:-1.0}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_MEMORY_RESERVATION:-128m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_CPU_RESERVATION:-0.25}"
     volumes:
       - nextcloud-data:${DATA_PATH:-/var/www/html}
     environment:
@@ -152,6 +182,16 @@ services:
 
   nextcloud-cron:
     image: *nextcloud-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_CRON_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_CRON_MEMORY_LIMIT:-512m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_CRON_CPU_LIMIT:-1.0}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_CRON_MEMORY_RESERVATION:-64m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_NEXTCLOUD_CRON_CPU_RESERVATION:-0.25}"
     entrypoint: /cron.sh
     volumes:
       - nextcloud-data:${DATA_PATH:-/var/www/html}
@@ -160,6 +200,16 @@ services:
 
   postgres-onlyoffice-document:
     image: *onlyoffice-postgres-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_POSTGRES_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_POSTGRES_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT:-1g}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_POSTGRES_ONLYOFFICE_DOCUMENT_CPU_LIMIT:-1.0}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_POSTGRES_ONLYOFFICE_DOCUMENT_MEMORY_RESERVATION:-128m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_POSTGRES_ONLYOFFICE_DOCUMENT_CPU_RESERVATION:-0.25}"
     volumes:
       - onlyoffice-document-postgres:/var/lib/postgresql/data
     environment:
@@ -178,6 +228,16 @@ services:
 
   redis-onlyoffice-document:
     image: *onlyoffice-redis-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_REDIS_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_REDIS_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT:-256m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_REDIS_ONLYOFFICE_DOCUMENT_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_REDIS_ONLYOFFICE_DOCUMENT_MEMORY_RESERVATION:-32m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_REDIS_ONLYOFFICE_DOCUMENT_CPU_RESERVATION:-0.1}"
     volumes:
       - redis-onlyoffice-document-data:/data
     networks:
@@ -192,6 +252,16 @@ services:
 
   rabbitmq-onlyoffice-document:
     image: *rabbitmq-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_RABBITMQ_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_RABBITMQ_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT:-512m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_RABBITMQ_ONLYOFFICE_DOCUMENT_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_RABBITMQ_ONLYOFFICE_DOCUMENT_MEMORY_RESERVATION:-64m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_RABBITMQ_ONLYOFFICE_DOCUMENT_CPU_RESERVATION:-0.1}"
     volumes:
       - rabbitmq-onlyoffice-document-data:/var/lib/rabbitmq
     environment:
@@ -209,6 +279,16 @@ services:
 
   onlyoffice-document:
     image: *onlyoffice-document-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT:-2g}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_ONLYOFFICE_DOCUMENT_CPU_LIMIT:-2.0}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_ONLYOFFICE_DOCUMENT_MEMORY_RESERVATION:-256m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_ONLYOFFICE_DOCUMENT_CPU_RESERVATION:-0.5}"
     volumes:
       - onlyoffice-document-data:/var/www/onlyoffice/Data
       - onlyoffice-document-log:/var/log/onlyoffice
@@ -274,6 +354,16 @@ services:
 
   traefik:
     image: *traefik-image
+    # Resource limits as .env-overridable defaults (e.g. TRAEFIK_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${TRAEFIK_MEMORY_LIMIT:-256m}
+          cpus: "${TRAEFIK_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${TRAEFIK_MEMORY_RESERVATION:-64m}
+          cpus: "${TRAEFIK_CPU_RESERVATION:-0.1}"
     command:
       # Set the log level (DEBUG, INFO, WARN, ERROR)
       - "--log.level=${TRAEFIK_LOG_LEVEL:-WARN}"
@@ -346,6 +436,16 @@ services:
 
   backups:
     image: *nextcloud-postgres-image
+    # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_BACKUPS_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXTCLOUD_ONLYOFFICE_BACKUPS_MEMORY_LIMIT:-256m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_BACKUPS_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${NEXTCLOUD_ONLYOFFICE_BACKUPS_MEMORY_RESERVATION:-32m}
+          cpus: "${NEXTCLOUD_ONLYOFFICE_BACKUPS_CPU_RESERVATION:-0.1}"
     # `$$VAR` / `$$(...)` escapes are required so docker compose does NOT
     # interpolate these at config time — they are resolved by the container
     # shell at runtime from the `environment:` block below, where the
