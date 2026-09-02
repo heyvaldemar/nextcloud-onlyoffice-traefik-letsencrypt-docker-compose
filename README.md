@@ -52,7 +52,7 @@ curl -fsk "https://${ONLYOFFICE_DOCUMENT_HOSTNAME}/healthcheck"   # true
 
 Eight images — [`traefik`](https://hub.docker.com/_/traefik), [`nextcloud`](https://hub.docker.com/_/nextcloud), [`postgres`](https://hub.docker.com/_/postgres) ×2, [`redis`](https://hub.docker.com/_/redis) ×2, [`onlyoffice/documentserver`](https://hub.docker.com/r/onlyoffice/documentserver), [`rabbitmq`](https://hub.docker.com/_/rabbitmq) — pinned to `tag@sha256:<digest>` as interpolation defaults in the compose `x-images` block. `git pull` alone delivers the tested combination; an `*_IMAGE_TAG` variable in `.env` overrides deliberately.
 
-The weekly `check-pin-freshness` CI job re-resolves each pin against its registry and compares the pinned Nextcloud, ONLYOFFICE, and Traefik versions against the latest upstream releases. GitHub Actions are pinned by commit SHA; Dependabot keeps those fresh.
+The daily `check-pin-freshness` CI job re-resolves each pin against its registry and compares the pinned Nextcloud, ONLYOFFICE, and Traefik versions against the latest upstream releases. GitHub Actions are pinned by commit SHA; Dependabot keeps those fresh.
 
 ## Production checklist
 
@@ -74,7 +74,7 @@ Every service carries memory and CPU limits plus reservations as compose-level d
 
 ## Testing
 
-The [Deployment Verification](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml?query=branch%3Amain) workflow runs on every push, pull request, and every Monday at 06:00 UTC: shellcheck + actionlint, Trivy scans of the pinned images, the weekly freshness check, and a deploy-and-test job that boots all nine services with ephemeral credentials and requires Nextcloud's `status.php` to report `installed:true` and the ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
+The [Deployment Verification](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml?query=branch%3Amain) workflow runs on every push, pull request, and every day at 06:00 UTC: shellcheck + actionlint, Trivy scans of the pinned images, the weekly freshness check, and a deploy-and-test job that boots all nine services with ephemeral credentials and requires Nextcloud's `status.php` to report `installed:true` and the ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
 ### Backup and restore, proven
 
