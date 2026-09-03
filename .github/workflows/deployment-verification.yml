@@ -85,7 +85,7 @@ jobs:
         env:
           ENV_VAR: ${{ matrix.env_var }}
         run: |
-          image="$(grep -m1 -oE "\\$\\{${ENV_VAR}:-.*" nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z_]+:-([^{}]*)\}/\1/' -e 'ta')"
+          image="$(grep -m1 -oE "\\$\\{${ENV_VAR}:-.*" nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z0-9_]+:-([^{}]*)\}/\1/' -e 'ta')"
           if [ -z "$image" ]; then
             echo "${ENV_VAR} default not found in the compose x-images block" >&2
             exit 1
@@ -129,7 +129,7 @@ jobs:
         run: |
           status=0
           for var in NEXTCLOUD_POSTGRES_IMAGE_TAG NEXTCLOUD_REDIS_IMAGE_TAG NEXTCLOUD_IMAGE_TAG ONLYOFFICE_DOCUMENT_IMAGE_TAG RABBITMQ_IMAGE_TAG TRAEFIK_IMAGE_TAG; do
-            pin="$(grep -m1 -oE "\\$\\{${var}:-.*" nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z_]+:-([^{}]*)\}/\1/' -e 'ta')"
+            pin="$(grep -m1 -oE "\\$\\{${var}:-.*" nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z0-9_]+:-([^{}]*)\}/\1/' -e 'ta')"
             ref="${pin%%@*}"
             pinned_digest="${pin##*@}"
             current_digest="$(docker buildx imagetools inspect "$ref" --format '{{json .Manifest}}' | jq -r .digest)"
@@ -144,7 +144,7 @@ jobs:
 
       - name: Compare pinned Nextcloud version against the latest Docker Hub tag
         run: |
-          pin="$(grep -m1 -oE '\$\{NEXTCLOUD_IMAGE_TAG:-.*' nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z_]+:-([^{}]*)\}/\1/' -e 'ta')"
+          pin="$(grep -m1 -oE '\$\{NEXTCLOUD_IMAGE_TAG:-.*' nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z0-9_]+:-([^{}]*)\}/\1/' -e 'ta')"
           ref="${pin%%@*}"
           pinned_version="${ref##*:}"
           tok="$(curl -fsSL --retry 3 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/nextcloud:pull' | jq -r .token)"
@@ -161,7 +161,7 @@ jobs:
 
       - name: Compare pinned ONLYOFFICE Docs version against the latest Docker Hub tag
         run: |
-          pin="$(grep -m1 -oE '\$\{ONLYOFFICE_DOCUMENT_IMAGE_TAG:-.*' nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z_]+:-([^{}]*)\}/\1/' -e 'ta')"
+          pin="$(grep -m1 -oE '\$\{ONLYOFFICE_DOCUMENT_IMAGE_TAG:-.*' nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z0-9_]+:-([^{}]*)\}/\1/' -e 'ta')"
           ref="${pin%%@*}"
           pinned_version="${ref##*:}"
           tok="$(curl -fsSL --retry 3 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:onlyoffice/documentserver:pull' | jq -r .token)"
@@ -178,7 +178,7 @@ jobs:
 
       - name: Compare pinned Traefik minor against the latest release
         run: |
-          pin="$(grep -m1 -oE '\$\{TRAEFIK_IMAGE_TAG:-.*' nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z_]+:-([^{}]*)\}/\1/' -e 'ta')"
+          pin="$(grep -m1 -oE '\$\{TRAEFIK_IMAGE_TAG:-.*' nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z0-9_]+:-([^{}]*)\}/\1/' -e 'ta')"
           ref="${pin%%@*}"
           pinned_minor="${ref##*:}"
           latest="$(curl -fsSL --retry 3 -H "Authorization: Bearer $GH_API_TOKEN" https://api.github.com/repos/traefik/traefik/releases/latest | jq -r .tag_name)"
