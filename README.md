@@ -3,7 +3,7 @@
 [![Deployment Verification](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository deploys **Nextcloud** with a full **ONLYOFFICE Docs** document server — collaborative editing of Word, Excel, and PowerPoint files inside your own cloud — behind **Traefik** with automatic **Let's Encrypt TLS**. Nine services: Nextcloud with PostgreSQL 16 and Redis, ONLYOFFICE Docs with its own PostgreSQL, Redis, and RabbitMQ, Traefik, and a scheduled backup container with companion restore scripts.
+This repository deploys **Nextcloud** with a full **ONLYOFFICE Docs** document server (collaborative editing of Word, Excel, and PowerPoint files inside your own cloud) behind **Traefik** with automatic **Let's Encrypt TLS**. Nine services: Nextcloud with PostgreSQL 16 and Redis, ONLYOFFICE Docs with its own PostgreSQL, Redis, and RabbitMQ, Traefik, and a scheduled backup container with companion restore scripts.
 
 📙 Full narrative installation guide on the blog: [heyvaldemar.com/install-nextcloud-with-onlyoffice-using-docker-compose/](https://www.heyvaldemar.com/install-nextcloud-with-onlyoffice-using-docker-compose/).
 
@@ -45,12 +45,14 @@ curl -fsk "https://${ONLYOFFICE_DOCUMENT_HOSTNAME}/healthcheck"   # true
 
 - **Cert issuance fails.** DNS hasn't propagated for one of the two hostnames, or port 80 isn't reachable.
 - **`docker compose up` fails with `set in .env`.** A required variable is empty; the error names it.
-- **Networks not found.** Step 2 was skipped — all three are required.
+- **Networks not found.** Step 2 was skipped: all three are required.
 - **ONLYOFFICE says \"download failed\" when opening a document.** The two services talk to each other server-side: both hostnames must resolve from inside the containers (public DNS, not just your laptop's hosts file), and the JWT secret in the connector app must match `.env`.
 
 ## Supply chain trust
 
-Eight images — [`traefik`](https://hub.docker.com/_/traefik), [`nextcloud`](https://hub.docker.com/_/nextcloud), [`postgres`](https://hub.docker.com/_/postgres) ×2, [`redis`](https://hub.docker.com/_/redis) ×2, [`onlyoffice/documentserver`](https://hub.docker.com/r/onlyoffice/documentserver), [`rabbitmq`](https://hub.docker.com/_/rabbitmq) — pinned to `tag@sha256:<digest>` as interpolation defaults in the compose `x-images` block. `git pull` alone delivers the tested combination; an `*_IMAGE_TAG` variable in `.env` overrides deliberately.
+Eight images ([`traefik`](https://hub.docker.com/_/traefik), [`nextcloud`](https://hub.docker.com/_/nextcloud), [`postgres`](https://hub.docker.com/_/postgres) ×2, [`redis`](https://hub.docker.com/_/redis) ×2, [`onlyoffice/documentserver`](https://hub.docker.com/r/onlyoffice/documentserver), [`rabbitmq`](https://hub.docker.com/_/rabbitmq)) pinned to `tag@sha256:<digest>` as interpolation defaults in the compose `x-images` block. `git pull` alone delivers the tested combination; an `*_IMAGE_TAG` variable in `.env` overrides deliberately.
+
+Two override levels exist per image. `<PREFIX>_IMAGE_VERSION` in `.env` swaps only the version of that image (Compose then pulls the tag, without a digest) and leaves every other pin as tested; `<PREFIX>_IMAGE_TAG` replaces the whole reference, digest included. The variable names are listed in `.env.example`. Nested defaults need Docker Compose v2.5 or newer (2022); v2.0 to v2.4 leave the inner `${...}` unexpanded and `docker compose up` fails with an invalid reference instead of deploying something unexpected.
 
 The daily `check-pin-freshness` CI job re-resolves each pin against its registry and compares the pinned Nextcloud, ONLYOFFICE, and Traefik versions against the latest upstream releases. GitHub Actions are pinned by commit SHA; Dependabot keeps those fresh.
 
@@ -58,7 +60,7 @@ The daily `check-pin-freshness` CI job re-resolves each pin against its registry
 
 - [ ] **Strong secrets** — five generated passwords plus the JWT secret, 24+ random characters each.
 - [ ] **Both DNS records** in place before first start, so Let's Encrypt issues on the first attempt.
-- [ ] **Verify the ONLYOFFICE connection** by opening a document — it exercises the JWT secret and server-side connectivity in both directions.
+- [ ] **Verify the ONLYOFFICE connection** by opening a document: it exercises the JWT secret and server-side connectivity in both directions.
 - [ ] **Host-mount the backup volumes** for disaster recovery.
 - [ ] **Upgrade Nextcloud one major at a time** — never skip majors; see the release notes.
 
@@ -70,7 +72,7 @@ Worth knowing: before v1.0.0 the backup loop pointed at a database host that doe
 
 ## Resource limits
 
-Every service carries memory and CPU limits plus reservations as compose-level defaults — the same values CI boots the stack under. Override any of them in `.env` (the knobs and their defaults are listed in `.env.example`, e.g. `TRAEFIK_MEMORY_LIMIT=512m`) and the override survives every `git pull`. If a service is OOM-killed under real load, `docker inspect <container> --format '{{.State.OOMKilled}}'` says so; raise its `_MEMORY_LIMIT` and recreate.
+Every service carries memory and CPU limits plus reservations as compose-level defaults, the same values CI boots the stack under. Override any of them in `.env` (the knobs and their defaults are listed in `.env.example`, e.g. `TRAEFIK_MEMORY_LIMIT=512m`) and the override survives every `git pull`. If a service is OOM-killed under real load, `docker inspect <container> --format '{{.State.OOMKilled}}'` says so; raise its `_MEMORY_LIMIT` and recreate.
 
 ## Container hardening
 
@@ -82,20 +84,20 @@ The [Deployment Verification](https://github.com/heyvaldemar/nextcloud-onlyoffic
 
 ### Backup and restore, proven
 
-`tests/e2e-backup-restore.sh` runs against the live stack and is what CI executes after the HTTPS smoke. The scenario that matters most is the restore roundtrip: insert a marker row, restore the earliest backup, assert the marker is gone — a backup that cannot be restored fails the build. Run it yourself against a running deployment with short intervals in `.env` (`BACKUP_INIT_SLEEP=15s`, `BACKUP_INTERVAL=60s`):
+`tests/e2e-backup-restore.sh` runs against the live stack and is what CI executes after the HTTPS smoke. The scenario that matters most is the restore roundtrip: insert a marker row, restore the earliest backup, assert the marker is gone. A backup that cannot be restored fails the build. Run it yourself against a running deployment with short intervals in `.env` (`BACKUP_INIT_SLEEP=15s`, `BACKUP_INTERVAL=60s`):
 
 ```bash
 chmod +x tests/e2e-backup-restore.sh
 ./tests/e2e-backup-restore.sh
 ```
 
-It stops the database container briefly to prove failure detection — run it on a staging copy, not on production.
+It stops the database container briefly to prove failure detection. Run it on a staging copy, not on production.
 
 ## Security Notes
 
 - Credentials are read from `.env` at deploy time; `.env` is gitignored and compose fails fast on missing required variables.
 - **Pre-rotation advisory.** Releases before v1.0.0 (2026-08-31) shipped a tracked `.env` with generated-looking passwords for the database, Redis, the Nextcloud admin, ONLYOFFICE, and RabbitMQ. Rotate them all if your deployment reused them.
-- JWT auth between Nextcloud and ONLYOFFICE is enabled by default (`JWT_ENABLED: true`) — without it, anyone who can reach the document server can feed it documents.
+- JWT auth between Nextcloud and ONLYOFFICE is enabled by default (`JWT_ENABLED: true`): without it, anyone who can reach the document server can feed it documents.
 - Databases, Redis, and RabbitMQ listen only on internal networks.
 
 ---

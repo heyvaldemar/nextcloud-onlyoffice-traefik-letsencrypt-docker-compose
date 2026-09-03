@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _(no unreleased changes yet)_
 
+## [1.4.0] - 2026-09-03
+
+### Added
+
+- **Per-image version overrides.** Every pin in the `x-images` block is
+  now `${<PREFIX>_IMAGE_TAG:-repo:${<PREFIX>_IMAGE_VERSION:-tag@sha256:digest}}`.
+  Set `<PREFIX>_IMAGE_VERSION` in `.env` to run a different version of one
+  image while every other pin stays as tested (Compose pulls that tag
+  without a digest), or `<PREFIX>_IMAGE_TAG` to replace the whole
+  reference as before. A deployment that sets neither is unchanged. The
+  freshness job, the Trivy matrix and the fleet digest automation resolve
+  the nested default before reading a pin. Needs Docker Compose v2.5 or
+  newer (2022): v2.0 to v2.4 leave the inner `${...}` unexpanded and
+  `docker compose up` fails with an invalid reference instead of
+  deploying something unexpected.
+
 ## [1.3.0] - 2026-09-02
 
 ### Security
@@ -100,7 +116,7 @@ v1.2.0.
 ### Changed (BREAKING for existing deployments)
 
 - **Nextcloud 29 (EOL) → 34.0.3.** Nextcloud upgrades exactly one major
-  version at a time — ❗ existing deployments must step through
+  version at a time: ❗ existing deployments must step through
   30 → 31 → 32 → 33 → 34 via `NEXTCLOUD_IMAGE_TAG` overrides. See the
   release notes for the full procedure.
 - **ONLYOFFICE Docs 8.1 → 9.4.0**, **Redis 7.2 → 7.4**,
@@ -124,7 +140,7 @@ v1.2.0.
 
 - **Credentials untracked from git.** The tracked `.env` carried
   generated-looking passwords for the database, Redis, the Nextcloud
-  admin, ONLYOFFICE, and RabbitMQ — rotate them all if reused.
+  admin, ONLYOFFICE, and RabbitMQ. Rotate them all if reused.
 
 ### Added
 
@@ -135,7 +151,8 @@ v1.2.0.
   requires Nextcloud's `status.php` to report `installed:true` and the
   ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.1.0...v1.1.1
