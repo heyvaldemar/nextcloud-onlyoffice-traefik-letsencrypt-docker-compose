@@ -1,9 +1,9 @@
-# Nextcloud + ONLYOFFICE Docs + Traefik + Let's Encrypt — Docker Compose
+# Nextcloud + ONLYOFFICE Docs + Traefik + Let's Encrypt on Docker Compose
 
 [![Deployment Verification](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository deploys **Nextcloud** with a full **ONLYOFFICE Docs** document server (collaborative editing of Word, Excel, and PowerPoint files inside your own cloud) behind **Traefik** with automatic **Let's Encrypt TLS**. Nine services: Nextcloud with PostgreSQL 16 and Redis, ONLYOFFICE Docs with its own PostgreSQL, Redis, and RabbitMQ, Traefik, and a scheduled backup container with companion restore scripts.
+This repository deploys Nextcloud with a full ONLYOFFICE Docs document server (collaborative editing of Word, Excel, and PowerPoint files inside your own cloud) behind Traefik with automatic Let's Encrypt TLS. Nine services: Nextcloud with PostgreSQL 16 and Redis, ONLYOFFICE Docs with its own PostgreSQL, Redis, and RabbitMQ, Traefik, and a scheduled backup container with companion restore scripts.
 
 📙 Full narrative installation guide on the blog: [heyvaldemar.com/install-nextcloud-with-onlyoffice-using-docker-compose/](https://www.heyvaldemar.com/install-nextcloud-with-onlyoffice-using-docker-compose/).
 
@@ -31,7 +31,7 @@ $EDITOR .env
 docker compose -f nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml -p nextcloud up -d
 ```
 
-Nextcloud installs itself on first start (admin account from `.env`). Once both services answer, connect them: in Nextcloud, install the **ONLYOFFICE** app from the app store, then in **Administration settings → ONLYOFFICE** set the Document Server address to `https://your-onlyoffice-hostname` and paste your `ONLYOFFICE_DOCUMENT_JWT_SECRET`.
+Nextcloud installs itself on first start (admin account from `.env`). Once both services answer, connect them: in Nextcloud, install the ONLYOFFICE app from the app store, then in Administration settings → ONLYOFFICE set the Document Server address to `https://your-onlyoffice-hostname` and paste your `ONLYOFFICE_DOCUMENT_JWT_SECRET`.
 
 ### What success looks like
 
@@ -58,11 +58,11 @@ The daily `check-pin-freshness` CI job re-resolves each pin against its registry
 
 ## Production checklist
 
-- [ ] **Strong secrets** — five generated passwords plus the JWT secret, 24+ random characters each.
+- [ ] **Strong secrets**: five generated passwords plus the JWT secret, 24+ random characters each.
 - [ ] **Both DNS records** in place before first start, so Let's Encrypt issues on the first attempt.
 - [ ] **Verify the ONLYOFFICE connection** by opening a document: it exercises the JWT secret and server-side connectivity in both directions.
 - [ ] **Host-mount the backup volumes** for disaster recovery.
-- [ ] **Upgrade Nextcloud one major at a time** — never skip majors; see the release notes.
+- [ ] **Upgrade Nextcloud one major at a time**: never skip majors; see the release notes.
 
 ## Backups and restore
 
@@ -93,7 +93,7 @@ chmod +x tests/e2e-backup-restore.sh
 
 It stops the database container briefly to prove failure detection. Run it on a staging copy, not on production.
 
-## Security Notes
+## Security notes
 
 - Credentials are read from `.env` at deploy time; `.env` is gitignored and compose fails fast on missing required variables.
 - **Pre-rotation advisory.** Releases before v1.0.0 (2026-08-31) shipped a tracked `.env` with generated-looking passwords for the database, Redis, the Nextcloud admin, ONLYOFFICE, and RabbitMQ. Rotate them all if your deployment reused them.

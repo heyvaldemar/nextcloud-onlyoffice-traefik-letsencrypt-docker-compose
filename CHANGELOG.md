@@ -86,12 +86,12 @@ _(no unreleased changes yet)_
 
 ### Added
 
-- **`tests/e2e-backup-restore.sh`** — seven end-to-end scenarios against
+- **`tests/e2e-backup-restore.sh`**: seven end-to-end scenarios against
   the live stack, run by CI on every push and by you locally: the
   required-variable guard fires, a backup is produced, it is a readable
   archive with real dump content (and a readable data `tar.gz` where the
   stack has one), a database outage is reported as `FAILED`, **restore
-  genuinely replaces database state** (a marker row inserted after the
+ replaces database state** (a marker row inserted after the
   baseline backup is gone after restoring it), and pruning removes only
   old files.
 
@@ -124,8 +124,8 @@ v1.2.0.
   version at a time: ❗ existing deployments must step through
   30 → 31 → 32 → 33 → 34 via `NEXTCLOUD_IMAGE_TAG` overrides. See the
   release notes for the full procedure.
-- **ONLYOFFICE Docs 8.1 → 9.4.0**, **Redis 7.2 → 7.4**,
-  **RabbitMQ 4.0 → 4.3**, **Traefik 3.2 → 3.7** (3.2's Docker client
+- **ONLYOFFICE Docs 8.1 → 9.4.0**, Redis 7.2 → 7.4,
+  **RabbitMQ 4.0 → 4.3, Traefik 3.2 → 3.7** (3.2's Docker client
   cannot talk to Docker Engine 29). PostgreSQL stays on 16, now
   digest-pinned.
 - **All images pinned by `tag@sha256:digest`** in the compose `x-images`
