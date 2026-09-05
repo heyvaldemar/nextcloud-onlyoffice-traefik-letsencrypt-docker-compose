@@ -59,6 +59,13 @@ services:
       - SETUID
     # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_POSTGRES_NEXTCLOUD_MEMORY_LIMIT=2g);
     # the override survives every git pull.
+    # Docker's default is ten seconds, then SIGKILL. That is not always enough
+    # for this image to finish shutting down: PostgreSQL has a checkpoint to
+    # write, MariaDB has InnoDB to flush, and Redis saves its dataset on the way
+    # out. Killed halfway, the next start does crash recovery, and a Redis that
+    # held another application's file locks leaves them behind for a person to
+    # clear by hand. Sixty seconds, overridable in .env.
+    stop_grace_period: ${NEXTCLOUD_ONLYOFFICE_POSTGRES_NEXTCLOUD_STOP_GRACE_PERIOD:-60s}
     deploy:
       resources:
         limits:
@@ -100,6 +107,13 @@ services:
       - SETUID
     # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_REDIS_NEXTCLOUD_MEMORY_LIMIT=2g);
     # the override survives every git pull.
+    # Docker's default is ten seconds, then SIGKILL. That is not always enough
+    # for this image to finish shutting down: PostgreSQL has a checkpoint to
+    # write, MariaDB has InnoDB to flush, and Redis saves its dataset on the way
+    # out. Killed halfway, the next start does crash recovery, and a Redis that
+    # held another application's file locks leaves them behind for a person to
+    # clear by hand. Sixty seconds, overridable in .env.
+    stop_grace_period: ${NEXTCLOUD_ONLYOFFICE_REDIS_NEXTCLOUD_STOP_GRACE_PERIOD:-60s}
     deploy:
       resources:
         limits:
@@ -249,6 +263,13 @@ services:
       - SETUID
     # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_POSTGRES_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT=2g);
     # the override survives every git pull.
+    # Docker's default is ten seconds, then SIGKILL. That is not always enough
+    # for this image to finish shutting down: PostgreSQL has a checkpoint to
+    # write, MariaDB has InnoDB to flush, and Redis saves its dataset on the way
+    # out. Killed halfway, the next start does crash recovery, and a Redis that
+    # held another application's file locks leaves them behind for a person to
+    # clear by hand. Sixty seconds, overridable in .env.
+    stop_grace_period: ${NEXTCLOUD_ONLYOFFICE_POSTGRES_ONLYOFFICE_DOCUMENT_STOP_GRACE_PERIOD:-60s}
     deploy:
       resources:
         limits:
@@ -290,6 +311,13 @@ services:
       - SETUID
     # Resource limits as .env-overridable defaults (e.g. NEXTCLOUD_ONLYOFFICE_REDIS_ONLYOFFICE_DOCUMENT_MEMORY_LIMIT=2g);
     # the override survives every git pull.
+    # Docker's default is ten seconds, then SIGKILL. That is not always enough
+    # for this image to finish shutting down: PostgreSQL has a checkpoint to
+    # write, MariaDB has InnoDB to flush, and Redis saves its dataset on the way
+    # out. Killed halfway, the next start does crash recovery, and a Redis that
+    # held another application's file locks leaves them behind for a person to
+    # clear by hand. Sixty seconds, overridable in .env.
+    stop_grace_period: ${NEXTCLOUD_ONLYOFFICE_REDIS_ONLYOFFICE_DOCUMENT_STOP_GRACE_PERIOD:-60s}
     deploy:
       resources:
         limits:
