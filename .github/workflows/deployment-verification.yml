@@ -128,8 +128,17 @@ jobs:
       - name: Compare pinned digests against what each tag resolves to now
         run: |
           status=0
-          for var in NEXTCLOUD_POSTGRES_IMAGE_TAG NEXTCLOUD_REDIS_IMAGE_TAG NEXTCLOUD_IMAGE_TAG ONLYOFFICE_DOCUMENT_IMAGE_TAG RABBITMQ_IMAGE_TAG TRAEFIK_IMAGE_TAG; do
+          # Enumerated from the compose file, never listed here. A list written
+          # by hand falls behind the file it describes: pins added to x-images
+          # and not to this line are never compared against the registry, and
+          # the job stays green while saying nothing about them.
+          vars="$(grep -oE '\$\{[A-Z0-9_]+_IMAGE_TAG:-' nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E 's/^\$\{//; s/:-$//' | sort -u)"
+          for var in $vars; do
             pin="$(grep -m1 -oE "\\$\\{${var}:-.*" nextcloud-onlyoffice-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z0-9_]+:-([^{}]*)\}/\1/' -e 'ta')"
+            # An image built from source has no published digest, so there is
+            # nothing to compare and a lookup would fail on a name no registry
+            # serves. Enumeration reaches those pins; this skips them.
+            case "$pin" in *@sha256:*) ;; *) continue ;; esac
             ref="${pin%%@*}"
             pinned_digest="${pin##*@}"
             # Three attempts: an unanswered registry lookup used to leave this empty,
