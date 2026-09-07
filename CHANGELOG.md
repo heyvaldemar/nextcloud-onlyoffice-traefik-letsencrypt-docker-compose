@@ -9,15 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _(no unreleased changes yet)_
 
-## [1.6.1] - 2026-09-06
+## [1.7.0] - 2026-09-07
 
-### Fixed
+### Added
 
-- **Two pinned images were never compared against the registry.** The
-  freshness job iterated a list of variable names written by hand, and the
-  document server own PostgreSQL and Redis pins were not on it. Both are
-  digest pins: `postgres:16` and `redis:7.4` are rebuilt regularly under the
-  same tag, which is exactly the kind of repush this job exists to catch. Both
+- **`update.sh`: move between release tags on purpose.** It updates to the latest release (a combination this repository's CI has booted and smoke-tested), refuses to cross a major version unattended, refuses to run over local changes, and names any new required variable before anything has moved. `--dry-run` says what would happen.
+
+h is exactly the kind of repush this job exists to catch. Both
   are current as of today, which is luck rather than a result.
 
 ### Changed
@@ -209,7 +207,8 @@ v1.2.0.
   requires Nextcloud's `status.php` to report `installed:true` and the
   ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.6.1...v1.7.0
 [1.6.1]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v1.4.1...v1.5.0
