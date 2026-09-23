@@ -70,7 +70,7 @@ The daily `check-pin-freshness` CI job re-resolves each pin against its registry
 
 ## Backups and restore
 
-The `backups` container runs a `pg_dump | gzip` + `tar.gz`-of-data → prune → sleep loop against the Nextcloud database (defaults: 30-minute warm-up, 24-hour interval, 7-day retention). Restore with the interactive scripts (`chmod +x *.sh` once): `./nextcloud-restore-database.sh`, then `./nextcloud-restore-application-data.sh`.
+The `backups` container runs a `pg_dump | gzip` + `tar.gz`-of-data → prune → sleep loop against the Nextcloud database (defaults: 30-minute warm-up, 24-hour interval, 7-day retention). Restore with the interactive scripts (`chmod +x *.sh` once): `./nextcloud-restore-database.sh`, then `./nextcloud-restore-application-data.sh`. Each lists the backups and asks, or takes a file name as its argument; both read every path and credential from the running backups container, and CI runs both on every push.
 
 Worth knowing: before v1.0.0 the backup loop pointed at a database host that does not exist in this stack, so it never produced a single backup. If you deployed an earlier revision, check that `/srv/nextcloud-postgres/backups` actually has files dated after your upgrade.
 
