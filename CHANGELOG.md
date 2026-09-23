@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The freshness check has its own workflow, Pin Freshness.** It ran inside Deployment Verification, whose badge is the one at the top of this README. Across the fleet, nine red runs in ten were a pin one version behind - which the fleet's triage moves within the day - and a reader cannot tell that from a stack that does not boot. The badge now says whether the stack boots. The job itself is unchanged.
+
 ### Security
 
 - **`rabbitmq:4.3-management` was rebuilt upstream**; the pin moved from `sha256:a7faa436fbb8…` to `sha256:ddc75301edf5…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
