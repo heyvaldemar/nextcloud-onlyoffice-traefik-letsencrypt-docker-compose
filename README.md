@@ -1,6 +1,7 @@
 # Nextcloud + ONLYOFFICE Docs + Traefik + Let's Encrypt on Docker Compose
 
 [![Deployment Verification](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14839/badge)](https://www.bestpractices.dev/projects/14839)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository deploys Nextcloud with a full ONLYOFFICE Docs document server (collaborative editing of Word, Excel, and PowerPoint files inside your own cloud) behind Traefik with automatic Let's Encrypt TLS. Nine services: Nextcloud with PostgreSQL 16 and Redis, ONLYOFFICE Docs with its own PostgreSQL, Redis, and RabbitMQ, Traefik, and a scheduled backup container with companion restore scripts.
