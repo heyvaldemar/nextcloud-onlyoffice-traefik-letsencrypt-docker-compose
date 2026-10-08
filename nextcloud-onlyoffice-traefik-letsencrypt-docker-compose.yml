@@ -7,10 +7,10 @@
 # the pins from these lines — this block is the single source of truth.
 x-images:
   traefik: &traefik-image ${TRAEFIK_IMAGE_TAG:-traefik:${TRAEFIK_IMAGE_VERSION:-3.7@sha256:b588cb566045e1ebb185948a8e2456f9705cb915b5f0fb5ee698184233997817}}
-  nextcloud-postgres: &nextcloud-postgres-image ${NEXTCLOUD_POSTGRES_IMAGE_TAG:-postgres:${NEXTCLOUD_POSTGRES_IMAGE_VERSION:-16@sha256:65b16a8b326e0cfbdf33fa7e783f2a0cb352a61448616ccccfd616ef42aa0f65}}
+  nextcloud-postgres: &nextcloud-postgres-image ${NEXTCLOUD_POSTGRES_IMAGE_TAG:-postgres:${NEXTCLOUD_POSTGRES_IMAGE_VERSION:-16@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d}}
   nextcloud-redis: &nextcloud-redis-image ${NEXTCLOUD_REDIS_IMAGE_TAG:-redis:${NEXTCLOUD_REDIS_IMAGE_VERSION:-7.4@sha256:4fa24486b8bcca8eec45ee0eb166edc674795e53a2b53d1a9ef263eecebaac85}}
   nextcloud: &nextcloud-image ${NEXTCLOUD_IMAGE_TAG:-nextcloud:${NEXTCLOUD_IMAGE_VERSION:-35.0.1@sha256:f4e0ee28ac9e54cad6e04e148489d79a609acba86dfbff69c8f666d50f96e414}}
-  onlyoffice-postgres: &onlyoffice-postgres-image ${ONLYOFFICE_DOCUMENT_POSTGRES_IMAGE_TAG:-postgres:${ONLYOFFICE_DOCUMENT_POSTGRES_IMAGE_VERSION:-16@sha256:65b16a8b326e0cfbdf33fa7e783f2a0cb352a61448616ccccfd616ef42aa0f65}}
+  onlyoffice-postgres: &onlyoffice-postgres-image ${ONLYOFFICE_DOCUMENT_POSTGRES_IMAGE_TAG:-postgres:${ONLYOFFICE_DOCUMENT_POSTGRES_IMAGE_VERSION:-16@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d}}
   onlyoffice-redis: &onlyoffice-redis-image ${ONLYOFFICE_DOCUMENT_REDIS_IMAGE_TAG:-redis:${ONLYOFFICE_DOCUMENT_REDIS_IMAGE_VERSION:-7.4@sha256:4fa24486b8bcca8eec45ee0eb166edc674795e53a2b53d1a9ef263eecebaac85}}
   onlyoffice-document: &onlyoffice-document-image ${ONLYOFFICE_DOCUMENT_IMAGE_TAG:-onlyoffice/documentserver:${ONLYOFFICE_DOCUMENT_IMAGE_VERSION:-9.4.0@sha256:e3da62a847b9a5d51a11f73cfea1d9c13c3be3809614490d4edddcf01dcf919b}}
   rabbitmq: &rabbitmq-image ${RABBITMQ_IMAGE_TAG:-rabbitmq:${RABBITMQ_IMAGE_VERSION:-4.3-management@sha256:8dd6e3570ddaa2ef82a6c3a8950e79c1f73893adfbdddbc374fc1f1ac8a0f5dd}}
