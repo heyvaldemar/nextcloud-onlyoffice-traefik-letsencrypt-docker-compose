@@ -33,6 +33,7 @@ volumes:
   onlyoffice-document-cache-files:
   onlyoffice-document-public-files:
   onlyoffice-document-fonts:
+  onlyoffice-document-custom-fonts:
   nextcloud-postgres:
   nextcloud-postgres-backup:
   onlyoffice-document-postgres:
@@ -392,6 +393,10 @@ services:
       - onlyoffice-document-cache-files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
       - onlyoffice-document-public-files:/var/www/onlyoffice/documentserver-example/public/files
       - onlyoffice-document-fonts:/usr/share/fonts
+      # The image declares this one as a volume of its own, so the mount above
+      # does not cover it: without a name it was an anonymous volume, and the
+      # custom fonts ONLYOFFICE's docs say to put here went with every down/up.
+      - onlyoffice-document-custom-fonts:/usr/share/fonts/truetype/custom
     environment:
       DB_TYPE: postgres
       DB_HOST: postgres-onlyoffice-document

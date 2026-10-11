@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **CI fails on an anonymous volume.** A `VOLUME` an image declares and no mount covers becomes an anonymous volume: never backed up, and replaced by an empty one on `down`/`up`. The deployment verification now inspects every container it starts and fails on one, unless `.github/anonymous-volumes` lists it with the reason. GLPI's data lived in exactly such a volume from 2026-08-31 to 2026-10-11.
 
+### Fixed
+
+- **Custom fonts get a named volume.** The ONLYOFFICE image declares `/usr/share/fonts/truetype/custom` as a volume of its own, so the `onlyoffice-document-fonts` mount on `/usr/share/fonts` never covered it: it was an anonymous volume, and fonts added there, where ONLYOFFICE's documentation says to put them, were gone after a `down`/`up`. It is now `onlyoffice-document-custom-fonts`. Fonts added before this release are still in the old anonymous volume; `docker volume ls -f dangling=true` lists it, and they can be copied across before running `documentserver-generate-allfonts.sh`. The new anonymous-volume check in CI found it on its first run.
+
 ### Security
 
 - **`nextcloud:35.0.1` was rebuilt upstream**; the pin moved from `sha256:f4e0ee28ac9e…` to `sha256:8f2f0e93aca5…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
