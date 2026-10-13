@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **CI connects Nextcloud to ONLYOFFICE Docs and runs the connector's own check.** It installs the ONLYOFFICE app, sets the addresses and the JWT secret the way the README tells a person to, and runs `occ onlyoffice:documentserver --check`: a signed request to the document server's command endpoint, then a conversion in which Docs fetches a file from Nextcloud. Until now CI proved each service answered on its own, and the README's checklist left the conversation between them to whoever opened the first document.
 
+### Changed
+
+- **ONLYOFFICE Docs 9.4.0 moved to 10.0.0.** A major release whose changelog carries a long list of security fixes, among them co-editing session hijacking and server-side request forgery through WOPI, path traversal, and memory corruption in the document parsers. Nextcloud's ONLYOFFICE connector (10.2.1) passed its own check against 10.0.0 in CI: a signed command to the document server and a conversion in which the document server fetches from Nextcloud. Upstream also changed behaviour that this template's default path does not use: `/converter`, `/docbuilder` and `/command` no longer accept a token from the editor configuration, WOPI needs explicit `ipfilter` rules, and `runtime.json` now changes only the logging level. If anything other than the Nextcloud connector calls the document server directly, read the 10.0.0 changelog before upgrading.
+
 ## [2.1.8] - 2026-10-11
 
 ### Added
