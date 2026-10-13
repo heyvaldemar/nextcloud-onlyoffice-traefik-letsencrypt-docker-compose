@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.2.0] - 2026-10-13
+
 ### Added
 
 - **CI connects Nextcloud to ONLYOFFICE Docs and runs the connector's own check.** It installs the ONLYOFFICE app, sets the addresses and the JWT secret the way the README tells a person to, and runs `occ onlyoffice:documentserver --check`: a signed request to the document server's command endpoint, then a conversion in which Docs fetches a file from Nextcloud. Until now CI proved each service answered on its own, and the README's checklist left the conversation between them to whoever opened the first document.
@@ -441,7 +445,8 @@ v1.2.0.
   requires Nextcloud's `status.php` to report `installed:true` and the
   ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.1.8...HEAD
+[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.1.8...v2.2.0
 [2.1.8]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.1.7...v2.1.8
 [2.1.7]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.1.6...v2.1.7
 [2.1.6]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.1.5...v2.1.6
