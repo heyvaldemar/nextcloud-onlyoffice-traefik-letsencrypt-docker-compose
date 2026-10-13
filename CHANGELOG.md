@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Added
+
+- **CI connects Nextcloud to ONLYOFFICE Docs and runs the connector's own check.** It installs the ONLYOFFICE app, sets the addresses and the JWT secret the way the README tells a person to, and runs `occ onlyoffice:documentserver --check`: a signed request to the document server's command endpoint, then a conversion in which Docs fetches a file from Nextcloud. Until now CI proved each service answered on its own, and the README's checklist left the conversation between them to whoever opened the first document.
 
 ## [2.1.8] - 2026-10-11
 

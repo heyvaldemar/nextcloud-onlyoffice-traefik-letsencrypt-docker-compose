@@ -1,0 +1,9 @@
+# CI only, for the connector check in deployment-verification.yml. In CI the
+# two services can reach each other only by private addresses on their shared
+# network, and ONLYOFFICE Docs refuses private addresses by default (its SSRF
+# guard). A deployment does not need this: Docs reaches Nextcloud by its public
+# hostname, as the README says.
+services:
+  onlyoffice-document:
+    environment:
+      ALLOW_PRIVATE_IP_ADDRESS: "true"

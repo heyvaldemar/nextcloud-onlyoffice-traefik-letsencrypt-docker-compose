@@ -263,6 +263,28 @@ jobs:
           done'
           curl -fsk "https://onlyoffice.heyvaldemarnco.net/healthcheck"; echo
 
+      - name: Nextcloud's ONLYOFFICE connector and the document server reach each other
+        # The README's "connect them" step, then the connector's own check. It
+        # is the whole conversation the README leaves to a person opening a
+        # document: Docs' healthcheck, a version request to /command signed
+        # with the JWT secret, then a conversion in which Docs fetches a file
+        # from Nextcloud and Nextcloud downloads the result. A server that
+        # answers its healthcheck can still refuse every signed request; an
+        # ONLYOFFICE Docs major changed how /command reads its token (10.0).
+        # Internal addresses, so no public DNS or certificate is involved.
+        run: |
+          docker compose -f "$DOCKER_COMPOSE_FILE" -f tests/ci-connector.yml -p "$COMPOSE_PROJECT_NAME" up -d --no-deps onlyoffice-document
+          timeout 10m bash -c 'until curl -fsk "https://onlyoffice.heyvaldemarnco.net/healthcheck" | grep -qx true; do sleep 10; done'
+          occ() { docker compose -f "$DOCKER_COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" exec -T -u www-data nextcloud php occ "$@"; }
+          occ app:install onlyoffice
+          occ config:system:set allow_local_remote_servers --type=boolean --value=true
+          occ config:system:set trusted_domains 9 --value=nextcloud
+          occ config:app:set onlyoffice DocumentServerUrl --value="https://onlyoffice.heyvaldemarnco.net/"
+          occ config:app:set onlyoffice DocumentServerInternalUrl --value="http://onlyoffice-document/"
+          occ config:app:set onlyoffice StorageUrl --value="http://nextcloud/"
+          occ config:app:set onlyoffice jwt_secret --sensitive --value="$(sed -n 's/^ONLYOFFICE_DOCUMENT_JWT_SECRET=//p' .env)" > /dev/null
+          occ onlyoffice:documentserver --check
+
       - name: Verify a backup is produced and valid
         # Log-driven: the file named in a 'backup OK' line is complete by
         # definition, so this never races a dump that is still being written.
