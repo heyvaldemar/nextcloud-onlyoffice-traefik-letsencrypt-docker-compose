@@ -283,7 +283,12 @@ jobs:
           occ config:app:set onlyoffice DocumentServerInternalUrl --value="http://onlyoffice-document/"
           occ config:app:set onlyoffice StorageUrl --value="http://nextcloud/"
           occ config:app:set onlyoffice jwt_secret --sensitive --value="$(sed -n 's/^ONLYOFFICE_DOCUMENT_JWT_SECRET=//p' .env)" > /dev/null
-          occ onlyoffice:documentserver --check
+          if ! occ onlyoffice:documentserver --check; then
+            # Docs logs to files, not to the container's output.
+            docker compose -f "$DOCKER_COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" exec -T onlyoffice-document sh -c \
+              'tail -n 40 /var/log/onlyoffice/documentserver/converter/out.log /var/log/onlyoffice/documentserver/docservice/out.log' || true
+            exit 1
+          fi
 
       - name: Verify a backup is produced and valid
         # Log-driven: the file named in a 'backup OK' line is complete by
