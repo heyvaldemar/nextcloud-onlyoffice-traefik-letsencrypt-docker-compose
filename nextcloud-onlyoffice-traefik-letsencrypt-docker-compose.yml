@@ -13,7 +13,7 @@ x-images:
   onlyoffice-postgres: &onlyoffice-postgres-image ${ONLYOFFICE_DOCUMENT_POSTGRES_IMAGE_TAG:-postgres:${ONLYOFFICE_DOCUMENT_POSTGRES_IMAGE_VERSION:-16@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d}}
   onlyoffice-redis: &onlyoffice-redis-image ${ONLYOFFICE_DOCUMENT_REDIS_IMAGE_TAG:-redis:${ONLYOFFICE_DOCUMENT_REDIS_IMAGE_VERSION:-7.4@sha256:4fa24486b8bcca8eec45ee0eb166edc674795e53a2b53d1a9ef263eecebaac85}}
   onlyoffice-document: &onlyoffice-document-image ${ONLYOFFICE_DOCUMENT_IMAGE_TAG:-onlyoffice/documentserver:${ONLYOFFICE_DOCUMENT_IMAGE_VERSION:-10.0.0@sha256:ca17889f10b11141cc6441836aebdd2835cf3e1b49681b2fd6e155c94b7850b3}}
-  rabbitmq: &rabbitmq-image ${RABBITMQ_IMAGE_TAG:-rabbitmq:${RABBITMQ_IMAGE_VERSION:-4.3-management@sha256:8dd6e3570ddaa2ef82a6c3a8950e79c1f73893adfbdddbc374fc1f1ac8a0f5dd}}
+  rabbitmq: &rabbitmq-image ${RABBITMQ_IMAGE_TAG:-rabbitmq:${RABBITMQ_IMAGE_VERSION:-4.3-management@sha256:8d0592c8f13b9ca76d844aa269f54461503223f36d0bf955859608d78baaf8fb}}
 
 networks:
   nextcloud-network:

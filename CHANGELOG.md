@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **`rabbitmq:4.3-management` was rebuilt upstream**; the pin moved from `sha256:8dd6e3570dda…` to `sha256:8d0592c8f13b…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
 
 ## [2.2.0] - 2026-10-13
 
