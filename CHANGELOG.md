@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **`traefik:3.7` was rebuilt upstream**; the pin moved from `sha256:1daf7eb7aa88…` to `sha256:0f6150202bc1…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`rabbitmq:4.3-management` was rebuilt upstream**; the pin moved from `sha256:8d0592c8f13b…` to `sha256:b575d00b4e30…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`nextcloud:35.0.2` was rebuilt upstream**; the pin moved from `sha256:04beab7530a8…` to `sha256:b8aabb4fd607…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
 
 ## [2.2.2] - 2026-10-16
 
