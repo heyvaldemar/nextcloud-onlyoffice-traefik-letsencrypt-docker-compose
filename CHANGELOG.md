@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.2.2] - 2026-10-16
+
 ### Changed
 
 - **`nextcloud:35.0.1` moved to `nextcloud:35.0.2`.** The freshness check reported the lag; the deploy job booted the stack on the new image before this landed.
@@ -457,7 +461,8 @@ v1.2.0.
   requires Nextcloud's `status.php` to report `installed:true` and the
   ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.2...HEAD
+[2.2.2]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.1.8...v2.2.0
 [2.1.8]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.1.7...v2.1.8
