@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **`nextcloud:35.0.2` was rebuilt upstream**; the pin moved from `sha256:6f514aae04ad…` to `sha256:e0b1a2af52c8…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
 
 ## [2.2.9] - 2026-10-28
 
