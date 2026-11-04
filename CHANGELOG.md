@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **`traefik:3.7` was rebuilt upstream**; the pin moved from `sha256:e9338a01a433…` to `sha256:68ae5fe5b64c…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`rabbitmq:4.3-management` was rebuilt upstream**; the pin moved from `sha256:1cc652597e8d…` to `sha256:6e51f8f18e05…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`nextcloud:35.0.2` was rebuilt upstream**; the pin moved from `sha256:e0b1a2af52c8…` to `sha256:6b015097ca6c…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+
 ### Fixed
 
 - **The backup tests wait for a whole cycle.** They gave a backup cycle 60 s beyond the interval. Here a cycle also archives the application data and reads it back, which took 80 s on 2026-11-04, so two tests missed the backup they were waiting for. The wait is now the interval plus 180 s. CI only.
