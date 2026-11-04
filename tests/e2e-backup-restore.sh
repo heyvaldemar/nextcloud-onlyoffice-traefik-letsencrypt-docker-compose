@@ -66,7 +66,12 @@ interval_seconds() {
     *) echo "$v" ;;
   esac
 }
-CYCLE_WAIT=$(( $(interval_seconds) + 60 ))
+# ONE CYCLE IS THE INTERVAL PLUS THE WORK, AND THE WORK HERE IS NOT SMALL.
+# Each cycle dumps the database, archives the application data and reads the
+# archive back before the interval's sleep. On 2026-11-04 (run 41772346189,
+# first attempt) the archive took 80 s, so a cycle was 141 s and two tests
+# waiting 120 s for "a backup after the marker" missed it by one cycle.
+CYCLE_WAIT=$(( $(interval_seconds) + 180 ))
 
 # --- Test runner ---
 

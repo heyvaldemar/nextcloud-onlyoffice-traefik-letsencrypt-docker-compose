@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The backup tests wait for a whole cycle.** They gave a backup cycle 60 s beyond the interval. Here a cycle also archives the application data and reads it back, which took 80 s on 2026-11-04, so two tests missed the backup they were waiting for. The wait is now the interval plus 180 s. CI only.
 - **The connector check no longer fails the run on its first cold attempt.** Run the moment the settings are written, it failed 9 of 61 runs in October 2026, always as a 403 on Docs' download from Nextcloud, and passed on a rerun of the same commit. That flake made the fleet revert a good Traefik digest refresh on 2026-11-03. The first failure is now printed with Docs' and Nextcloud's logs and kept as a warning, and the check is asked once more a minute later. A second failure still fails the run. CI only; nothing a deployment runs has changed.
 
 ## [2.2.12] - 2026-11-01

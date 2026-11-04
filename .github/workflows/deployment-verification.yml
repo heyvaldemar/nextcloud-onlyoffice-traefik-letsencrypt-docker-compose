@@ -296,10 +296,13 @@ jobs:
           # way: Docs' download of the empty file from Nextcloud answered 403 on
           # all three of Docs' own attempts, and the same commit passed on a
           # rerun (41657944531 on 2026-11-03, after the fleet had reverted a good
-          # Traefik digest refresh for it). The cause is not pinned down yet, so
-          # the first failure is printed with both logs and kept as a warning,
-          # and the check is asked once more a minute later; a second failure
-          # fails the run as before.
+          # Traefik digest refresh for it). Nextcloud's log names it: "Download
+          # empty with empty or not correct hash: Signature verification failed"
+          # (run 41772346189). The web worker checks the document link against a
+          # signing key the occ process has only just written, and does not see
+          # it yet; a minute later it does. So the first failure is printed with
+          # both logs and kept as a warning, and the check is asked once more a
+          # minute later; a second failure fails the run as before.
           if ! occ onlyoffice:documentserver --check; then
             logs
             echo "::warning::the connector check failed straight after setup; asking again in 60 s (logs above)"
