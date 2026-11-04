@@ -283,11 +283,31 @@ jobs:
           occ config:app:set onlyoffice DocumentServerInternalUrl --value="http://onlyoffice-document/"
           occ config:app:set onlyoffice StorageUrl --value="http://nextcloud/"
           occ config:app:set onlyoffice jwt_secret --sensitive --value="$(sed -n 's/^ONLYOFFICE_DOCUMENT_JWT_SECRET=//p' .env)" > /dev/null
-          if ! occ onlyoffice:documentserver --check; then
-            # Docs logs to files, not to the container's output.
+          logs() {
+            # Docs logs to files, not to the container's output; Nextcloud's
+            # own log says why it answered Docs' download with a 403.
             docker compose -f "$DOCKER_COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" exec -T onlyoffice-document sh -c \
               'tail -n 40 /var/log/onlyoffice/documentserver/converter/out.log /var/log/onlyoffice/documentserver/docservice/out.log' || true
-            exit 1
+            docker compose -f "$DOCKER_COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" exec -T -u www-data nextcloud sh -c \
+              'tail -n 20 "$(php occ config:system:get datadirectory)/nextcloud.log"' || true
+          }
+          # A CHECK RUN THE MOMENT THE SETTINGS ARE WRITTEN FAILS ABOUT ONE RUN IN
+          # SEVEN. In October 2026 it failed 9 of 61 runs, every time the same
+          # way: Docs' download of the empty file from Nextcloud answered 403 on
+          # all three of Docs' own attempts, and the same commit passed on a
+          # rerun (41657944531 on 2026-11-03, after the fleet had reverted a good
+          # Traefik digest refresh for it). The cause is not pinned down yet, so
+          # the first failure is printed with both logs and kept as a warning,
+          # and the check is asked once more a minute later; a second failure
+          # fails the run as before.
+          if ! occ onlyoffice:documentserver --check; then
+            logs
+            echo "::warning::the connector check failed straight after setup; asking again in 60 s (logs above)"
+            sleep 60
+            if ! occ onlyoffice:documentserver --check; then
+              logs
+              exit 1
+            fi
           fi
 
       - name: Verify a backup is produced and valid
