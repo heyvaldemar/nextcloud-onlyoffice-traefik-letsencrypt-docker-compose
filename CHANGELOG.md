@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.2.15] - 2026-11-06
+
 ### Security
 
 - **`traefik:3.7` was rebuilt upstream**; the pin moved from `sha256:68ae5fe5b64c…` to `sha256:92627e6a99f7…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
@@ -565,7 +569,8 @@ v1.2.0.
   requires Nextcloud's `status.php` to report `installed:true` and the
   ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.14...HEAD
+[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.15...HEAD
+[2.2.15]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.14...v2.2.15
 [2.2.14]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.13...v2.2.14
 [2.2.13]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.12...v2.2.13
 [2.2.12]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.11...v2.2.12
