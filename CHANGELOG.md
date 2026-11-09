@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.2.18] - 2026-11-08
+
 ### Security
 
 - **The restore scripts keep the database password off every command line.** After a restore, `align_nextcloud_account` gave the database account config.php's password with `psql -v p=<password>` inside the backups container: the value was in psql's arguments, and the host's `ps` shows those for every container. psql now reads it from its own environment with `\getenv` (psql 15 and later; the backups container runs the postgres image's psql). The database host reaches `docker exec` by name as well (`-e PGHOST`), not as `-e PGHOST=value`. Fleet conformance flagged the second, now that it checks any value expanded into `-e NAME=`; the first was found reading the same function.
@@ -584,7 +588,8 @@ v1.2.0.
   requires Nextcloud's `status.php` to report `installed:true` and the
   ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.17...HEAD
+[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.18...HEAD
+[2.2.18]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.17...v2.2.18
 [2.2.17]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.16...v2.2.17
 [2.2.16]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.15...v2.2.16
 [2.2.15]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.14...v2.2.15
