@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.2.20] - 2026-11-13
+
 ### Security
 
 - **`rabbitmq:4.3-management` was rebuilt upstream**; the pin moved from `sha256:6e51f8f18e05…` to `sha256:8e913a7748f8…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
@@ -602,7 +606,8 @@ v1.2.0.
   requires Nextcloud's `status.php` to report `installed:true` and the
   ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.19...HEAD
+[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.20...HEAD
+[2.2.20]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.19...v2.2.20
 [2.2.19]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.18...v2.2.19
 [2.2.18]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.17...v2.2.18
 [2.2.17]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.16...v2.2.17
