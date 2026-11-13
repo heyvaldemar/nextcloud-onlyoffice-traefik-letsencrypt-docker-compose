@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **`rabbitmq:4.3-management` was rebuilt upstream**; the pin moved from `sha256:6e51f8f18e05…` to `sha256:8e913a7748f8…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`postgres:16` was rebuilt upstream**; the pin moved from `sha256:f9a7b9ebf6f5…` to `sha256:63e83b5a3dc3…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`postgres:16` was rebuilt upstream**; the pin moved from `sha256:f9a7b9ebf6f5…` to `sha256:63e83b5a3dc3…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
 
 ## [2.2.19] - 2026-11-12
 
