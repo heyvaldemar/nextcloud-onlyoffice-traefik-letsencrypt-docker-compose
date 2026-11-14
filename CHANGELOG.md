@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.2.21] - 2026-11-14
+
 ### Fixed
 
 - **Nextcloud's Redis health check was green with any password.** `redis-cli ping` exits 0 on an error reply, so against `requirepass` the check passed with no password (NOAUTH) and with a wrong one (WRONGPASS), measured on redis 7.4.11. It now takes the password from `REDISCLI_AUTH`, never from its arguments, and passes only on PONG. CI plants a wrong password and waits for Docker to mark Redis unhealthy, and watches every process's command line for the password through the whole run.
@@ -608,7 +612,8 @@ v1.2.0.
   requires Nextcloud's `status.php` to report `installed:true` and the
   ONLYOFFICE `/healthcheck` to return `true`, both through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.20...HEAD
+[Unreleased]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.21...HEAD
+[2.2.21]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.20...v2.2.21
 [2.2.20]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.19...v2.2.20
 [2.2.19]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.18...v2.2.19
 [2.2.18]: https://github.com/heyvaldemar/nextcloud-onlyoffice-traefik-letsencrypt-docker-compose/compare/v2.2.17...v2.2.18
