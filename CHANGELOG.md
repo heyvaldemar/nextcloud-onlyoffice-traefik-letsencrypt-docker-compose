@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **`rabbitmq:4.3-management` was rebuilt upstream**; the pin moved from `sha256:bd0c7c94bca9…` to `sha256:2831d9a97da9…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`redis:7.4` was rebuilt upstream**; the pin moved from `sha256:2e3eb11462c4…` to `sha256:6b645a37f49b…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`postgres:16` was rebuilt upstream**; the pin moved from `sha256:3950ad7c3148…` to `sha256:07abc3f43c93…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`redis:7.4` was rebuilt upstream**; the pin moved from `sha256:2e3eb11462c4…` to `sha256:6b645a37f49b…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`postgres:16` was rebuilt upstream**; the pin moved from `sha256:3950ad7c3148…` to `sha256:07abc3f43c93…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`nextcloud:35.0.3` was rebuilt upstream**; the pin moved from `sha256:f22d1dd63844…` to `sha256:f44180601f18…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
 
 ## [2.2.26] - 2026-11-24
 
